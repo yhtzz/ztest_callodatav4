@@ -1,0 +1,71 @@
+_schema-version: "3.1"
+ID: ztest_callodatav4
+version: 1.0.0
+description: "A simple CAP project."
+parameters:
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm install --production
+        - npm ci --production
+        - npx cds build --production
+modules:
+  - name: ztest_callodatav4-srv
+    type: nodejs
+    path: gen/srv
+    parameters:
+      buildpack: nodejs_buildpack
+    build-parameters:
+      builder: npm
+    provides:
+      - name: srv-api # required by consumers of CAP services (e.g. approuter)
+        properties:
+          srv-url: ${default-url}
+    requires:
+      - name: ztest_callodatav4-destination
+      - name: ztest_callodatav4-auth
+      - name: ztest_callodatav4-connectivity
+      - name: ztest_callodatav4-connectivityproxy
+  - name: ztest_callodatav4
+    type: approuter.nodejs
+    path: app\router
+    parameters:
+      keep-existing-routes: true
+      disk-quota: 256M
+      memory: 256M
+    requires:
+      - name: srv-api
+        group: destinations
+        properties:
+          name: srv-api # must be used in xs-app.json as well
+          url: ~{srv-url}
+          forwardAuthToken: true
+      - name: ztest_callodatav4-auth
+
+resources:
+  - name: ztest_callodatav4-destination
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite
+  - name: ztest_callodatav4-auth
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json
+      config:
+        xsappname: ztest_callodatav4-${org}-${space}
+        tenant-mode: dedicated
+  - name: ztest_callodatav4-connectivity
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: connectivity
+      service-plan: lite
+  - name: ztest_callodatav4-connectivityproxy
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: connectivity
+      service-plan: lite
