@@ -1,0 +1,67 @@
+{
+  "name": "ztest_callodatav4",
+  "version": "1.0.0",
+  "description": "A simple CAP project.",
+  "repository": "<Add your repository here>",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@sap-cloud-sdk/http-client": "^3.23.0",
+    "@sap-cloud-sdk/resilience": "^3.23.0",
+    "@sap/cds": "^7",
+    "@sap/cds-hana": "^2",
+    "@sap/xssec": "^3.6.1",
+    "axios": "^1.7.8",
+    "express": "^4",
+    "ztest_callodatav4": "file:"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^1",
+    "@sap/cds-dk": "^7"
+  },
+  "scripts": {
+    "start": "cds-serve"
+  },
+  "cds": {
+    "requires": {
+      "ztest_13509_001": {
+        "kind": "odata",
+        "model": "srv/external/ztest_13509_001",
+        "csrf": true,
+        "[locbox]": {
+          "credentials": {
+            "url": "http://127.0.0.1:44320/sap/opu/odata4/sap/ztest_13509_001/default/sap/ztest_13509_001/0001",
+            "queries": {
+              "sap-client": "200"
+            },
+            "headers": {
+              "Proxy-Authorization": "AuthHeaderForTheProxy"
+            }
+          }
+        },
+        "[production]": {
+          "credentials": {
+            "path": "/sap/opu/odata4/sap/ztest_13509_001/default/sap/ztest_13509_001/0001",
+            "destination": "ZTEST001"
+          }
+        },
+        "[hybrid]": {
+          "credentials": {
+            "path": "/sap/opu/odata4/sap/ztest_13509_001/default/sap/ztest_13509_001/0001",
+            "destination": "ZTEST001"
+          }
+        },
+        "[default]": {
+          "credentials": {
+            "path": "/sap/opu/odata4/sap/ztest_13509_001/default/sap/ztest_13509_001/0001",
+            "destination": "ZTEST001"
+          }
+        }
+      },
+      "[production]": {
+        "auth": "xsuaa",
+        "db": "hana"
+      }
+    }
+  }
+}

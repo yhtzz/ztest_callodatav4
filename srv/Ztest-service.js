@@ -19,6 +19,8 @@ module.exports = cds.service.impl(async function () {
   const cc1 = cfConfig1.connectivity[0].credentials
   console.log(cc1)*/
   //console.log( process.env.CDS_ENV)
+
+ // console.log( cds.env.features.fetch_csrf )
   if (process.env.CDS_ENV == 'hybrid') {
     const fs = require('fs');
     fs.readFile('default-env.json', 'utf8', (err, vcapservicejson) => {
